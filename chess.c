@@ -1,4 +1,5 @@
 #include "chess.h"
+#include <ctype.h>
 #include <stdio.h>
 
 int Chess(char board[LINE][LINE], char* cmd)
@@ -15,7 +16,7 @@ int Chess(char board[LINE][LINE], char* cmd)
         return -1;
     }
     int index = 0;
-    getFigureType(board, cmd);
+    char figureType = getFigureType(board, cmd);
     while (index < 4) {
         // Проверка на тип фигуры
         if (checkFigure(cmd, index) == -1) {
@@ -30,7 +31,7 @@ int Chess(char board[LINE][LINE], char* cmd)
         index += 3;
     }
     printf("------%s------\n", cmd);
-    if (Swap(board, cmd) == -1) {
+    if (Swap(board, cmd, figureType) == -1) {
         return -1;
     }
     printBoard(board);
@@ -62,8 +63,8 @@ char getFigureType(char board[LINE][LINE], char* cmd)
 {
     // Удаляет первый элемент из cmd
     if (cmd[0] >= 'a' && cmd[0] <= 'h') {
-        int figure_location_x = ('a' - cmd[0]) * -1;
-        int figure_location_y = ('8' - cmd[1]);
+        int figure_location_x = ('8' - cmd[1]);
+        int figure_location_y = ('a' - cmd[0]) * -1;
         if (board[figure_location_x][figure_location_y] == 'P') {
             return 'P';
         } else {
@@ -91,16 +92,33 @@ int checkBoard(char* cmd, int index)
     return -1;
 }
 
-int Swap(char board[LINE][LINE], char* cmd)
+int Swap(char board[LINE][LINE], char* cmd, char figureType)
 {
     // Передвигаем фигуру
-    int figure_location_x = ('a' - cmd[0]) * -1;
-    int figure_location_y = ('8' - cmd[1]);
-    int figure_destination_x = ('a' - cmd[3]) * -1;
-    int figure_destination_y = ('8' - cmd[4]);
+    int figure_location_x = ('8' - cmd[1]);
+    int figure_location_y = ('a' - cmd[0]) * -1;
+    int figure_destination_x = ('8' - cmd[4]);
+    int figure_destination_y = ('a' - cmd[3]) * -1;
+    if (toupper(figureType)
+        != toupper(board[figure_location_x][figure_location_y])) {
+        printf("Обозначения фигур должны соответствовать фактическим.\n");
+        return -1;
+    }
+    if (cmd[2] == 'x'
+        && board[figure_destination_x][figure_destination_y] == '.') {
+        printf("Ошибка. Нет фигуры для взятия.\n");
+        return -1;
+    }
+    if (cmd[2] == '-'
+        && board[figure_destination_x][figure_destination_y] != '.') {
+        printf("Ошибка. Клетка не пустая.\n");
+        return -1;
+    }
+
     char temp = board[figure_location_x][figure_location_y];
     board[figure_location_x][figure_location_y] = '.';
     board[figure_destination_x][figure_destination_y] = temp;
+
     return 0;
 }
 
