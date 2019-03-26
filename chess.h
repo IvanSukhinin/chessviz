@@ -1,10 +1,12 @@
 #define LINE 8
-#define LEN_CMD 20
+#define LEN_CMD 100
+#define LEN_MOVE_CMD 20
+#define PLAYER_COUNT 2
 
-int checkNumbering(char* cmd);
-int Swap(char board[LINE][LINE], char* cmd, char figureType);
+int checkFigureType(char* cmd);
+int checkFigureMove(char board[LINE][LINE], char* cmd);
+int checkNumeration(char* cmd, int currentIndex);
 void printBoard(char board[LINE][LINE]);
-int checkBoard(char* cmd, int index);
+void Swap(char board[LINE][LINE], char* cmd);
 char getFigureType(char board[LINE][LINE], char* cmd);
-int checkFigure(char* cmd, int index);
-int Chess(char board[LINE][LINE], char* cmd);
+int runChess(char board[LINE][LINE], char* cmd);

@@ -2,70 +2,13 @@
 #include <ctype.h>
 #include <stdio.h>
 
-int Chess(char board[LINE][LINE], char* cmd)
-{
-    if (checkNumbering(cmd) == -1) {
-        printf("%s\n", cmd);
-        return 0;
-    }
-    int size;
-    for (size = 0; cmd[size] != '\0'; size++) {
-    }
-    if (size > 7) {
-        printf("%s\nОшибка в синтаксисе команды\n", cmd);
-        return -1;
-    }
-    int index = 0;
-    char figureType = getFigureType(board, cmd);
-    while (index < 4) {
-        // Проверка на тип фигуры
-        if (checkFigure(cmd, index) == -1) {
-            printf("%s\ncheckFigure == -1\n", cmd);
-            return -1;
-        }
-        // Проверка диапазона
-        if (checkBoard(cmd, index) == -1) {
-            printf("%s\ncheckBoard == -1\n", cmd);
-            return -1;
-        }
-        index += 3;
-    }
-    printf("------%s------\n", cmd);
-    if (Swap(board, cmd, figureType) == -1) {
-        return -1;
-    }
-    printBoard(board);
-
-    return 0;
-}
-
-int checkNumbering(char* cmd)
-{
-    // Проверка нумерации ходов
-    if (cmd[0] >= '1' && cmd[0] <= '9') {
-        return -1;
-    }
-    return 0;
-}
-
-int checkFigure(char* cmd, int index)
-{
-    // Проверка на тип фигуры
-    if (!(cmd[index] == 'K' || cmd[index] == 'Q' || cmd[index] == 'R'
-          || cmd[index] == 'B' || cmd[index] == 'N'
-          || (cmd[index] >= 'a' && cmd[index] <= 'h'))) {
-        return -1;
-    }
-    return 0;
-}
-
 char getFigureType(char board[LINE][LINE], char* cmd)
 {
     // Удаляет первый элемент из cmd
     if (cmd[0] >= 'a' && cmd[0] <= 'h') {
-        int figure_location_x = ('8' - cmd[1]);
-        int figure_location_y = ('a' - cmd[0]) * -1;
-        if (board[figure_location_x][figure_location_y] == 'P') {
+        int figureLocationX = ('8' - cmd[1]);
+        int figureLocationY = ('a' - cmd[0]) * -1;
+        if (board[figureLocationX][figureLocationY] == 'P') {
             return 'P';
         } else {
             return 'p';
@@ -81,45 +24,17 @@ char getFigureType(char board[LINE][LINE], char* cmd)
     return figureType;
 }
 
-int checkBoard(char* cmd, int index)
+void Swap(char board[LINE][LINE], char* cmd)
 {
-    // Проверка на выход за пределы поля
-    if ((cmd[index] >= 'a' && cmd[index] <= 'h')
-        && (cmd[index + 1] >= '1' && cmd[index + 1] <= '8')
-        && (cmd[index + 2] < '0' || cmd[index + 2] > '9')) {
-        return 0;
-    }
-    return -1;
-}
-
-int Swap(char board[LINE][LINE], char* cmd, char figureType)
-{
+    // Вычисляем координаты
+    int figureLocationX = ('8' - cmd[1]);
+    int figureLocationY = ('a' - cmd[0]) * -1;
+    int figureDestinationX = ('8' - cmd[4]);
+    int figureDestinationY = ('a' - cmd[3]) * -1;
     // Передвигаем фигуру
-    int figure_location_x = ('8' - cmd[1]);
-    int figure_location_y = ('a' - cmd[0]) * -1;
-    int figure_destination_x = ('8' - cmd[4]);
-    int figure_destination_y = ('a' - cmd[3]) * -1;
-    if (toupper(figureType)
-        != toupper(board[figure_location_x][figure_location_y])) {
-        printf("Обозначения фигур должны соответствовать фактическим.\n");
-        return -1;
-    }
-    if (cmd[2] == 'x'
-        && board[figure_destination_x][figure_destination_y] == '.') {
-        printf("Ошибка. Нет фигуры для взятия.\n");
-        return -1;
-    }
-    if (cmd[2] == '-'
-        && board[figure_destination_x][figure_destination_y] != '.') {
-        printf("Ошибка. Клетка не пустая.\n");
-        return -1;
-    }
-
-    char temp = board[figure_location_x][figure_location_y];
-    board[figure_location_x][figure_location_y] = '.';
-    board[figure_destination_x][figure_destination_y] = temp;
-
-    return 0;
+    char temp = board[figureLocationX][figureLocationY];
+    board[figureLocationX][figureLocationY] = '.';
+    board[figureDestinationX][figureDestinationY] = temp;
 }
 
 void printBoard(char board[LINE][LINE])
@@ -136,4 +51,151 @@ void printBoard(char board[LINE][LINE])
         printf("%c ", i);
     }
     printf("\n");
+}
+
+int checkNumeration(char* cmd, int currentIndex)
+{
+    // Проверка нумерации
+    int numerationIndex;
+    for (numerationIndex = currentIndex; cmd[numerationIndex] != '.';
+         numerationIndex++) {
+        if (cmd[numerationIndex] < '1' || cmd[numerationIndex] > '8') {
+            return -1;
+        }
+        if (cmd[numerationIndex] == '\0') {
+            return -1;
+        }
+    }
+    // Выводим номер хода, если все ок
+    for (int i = currentIndex; cmd[i] != '.'; i++) {
+        printf("%c", cmd[i]);
+    }
+    printf(" ход : \n");
+
+    return numerationIndex + 1;
+}
+
+int checkFigureMove(char board[LINE][LINE], char* cmd)
+{
+    char figureType = getFigureType(board, cmd);
+    // Проверка на выход за пределы поля
+    enum CommandIndex {
+        figureLocationLetter,
+        figureLocationIndex,
+        moveOperation,
+        figureDestinationLetter,
+        figureDestinationIndex,
+    };
+    if (!((cmd[figureLocationLetter] >= 'a' && cmd[figureLocationLetter] <= 'h')
+          && (cmd[figureLocationIndex] >= '1'
+              && cmd[figureLocationIndex] <= '8')
+          && (cmd[figureDestinationIndex] >= '0'
+              && cmd[figureDestinationIndex] <= '8')
+          && (cmd[figureDestinationLetter] >= 'a'
+              && cmd[figureDestinationLetter] <= 'h'))
+        || (cmd[figureDestinationIndex + 1] > '0'
+            && cmd[figureDestinationIndex + 1] < '9')
+        || (cmd[figureLocationIndex + 1] > '0'
+            && cmd[figureLocationIndex + 1] < '9')) {
+        printf("Выход за пределы поля : %s\n", cmd);
+        return -1;
+    }
+
+    // Получаем координаты
+    int figureLocationX = ('8' - cmd[figureLocationIndex]);
+    int figureLocationY = ('a' - cmd[figureLocationLetter]) * -1;
+    int figureDestinationX = ('8' - cmd[figureDestinationIndex]);
+    int figureDestinationY = ('a' - cmd[figureDestinationLetter]) * -1;
+
+    if (cmd[moveOperation] != '-' && cmd[moveOperation] != 'x') {
+        printf("%s\nЧе за %c?\n", cmd, cmd[2]);
+        return -1;
+    }
+    if (cmd[moveOperation] == 'x'
+        && board[figureDestinationX][figureDestinationY] == '.') {
+        printf("Ошибка. Нет фигуры для взятия : %s\n", cmd);
+        return -1;
+    }
+    if (cmd[moveOperation] == '-'
+        && board[figureDestinationX][figureDestinationY] != '.') {
+        printf("Ошибка. Клетка не пустая : %s\n", cmd);
+        return -1;
+    }
+    if (toupper(figureType)
+        != toupper(board[figureLocationX][figureLocationY])) {
+        printf("Обозначения фигур должны соответствовать фактическим : %s\n",
+               cmd);
+        return -1;
+    }
+
+    // Делаем ход
+    char newLocation = board[figureLocationX][figureLocationY];
+    board[figureLocationX][figureLocationY] = '.';
+    board[figureDestinationX][figureDestinationY] = newLocation;
+
+    return 0;
+}
+
+int checkFigureType(char* cmd)
+{
+    // Проверка на тип фигуры
+    int figureIndex = 0;
+    if (!(cmd[figureIndex] == 'K' || cmd[figureIndex] == 'Q'
+          || cmd[figureIndex] == 'R' || cmd[figureIndex] == 'B'
+          || cmd[figureIndex] == 'N'
+          || (cmd[figureIndex] >= 'a' && cmd[figureIndex] <= 'h'))) {
+        return -1;
+    }
+
+    return 0;
+}
+
+int runChess(char board[LINE][LINE], char* cmd)
+{
+    int currentIndex = 0;
+    while (isspace(cmd[currentIndex]) != 0) {
+        currentIndex++;
+    }
+    currentIndex = checkNumeration(cmd, currentIndex);
+    if (currentIndex == -1) {
+        printf("Ошибка в нумерации : %s\n", cmd);
+        return -1;
+    }
+    while (isspace(cmd[currentIndex]) != 0) {
+        currentIndex++;
+    }
+    int commandIndex = currentIndex;
+    int player = 0;
+    while (player < PLAYER_COUNT) {
+        char moveCommandFirst[LEN_MOVE_CMD];
+        int commandWriteIndex = 0;
+        while (isspace(cmd[commandIndex]) == 0) {
+            if (commandIndex - currentIndex > 7) {
+                printf("Ошибка в написании хода : %s\n", cmd);
+                return -1;
+            }
+            moveCommandFirst[commandWriteIndex] = cmd[commandIndex];
+            commandIndex++;
+            commandWriteIndex++;
+        }
+        if (moveCommandFirst[0] == '\0') {
+            return 0;
+        }
+        printf("-----%s-----\n", moveCommandFirst);
+        moveCommandFirst[commandWriteIndex + 1] = '\0';
+        if (checkFigureType(moveCommandFirst) == -1) {
+            printf("Неизвестный тип фигуры %s\n", cmd);
+            return -1;
+        }
+        if (checkFigureMove(board, moveCommandFirst) == -1) {
+            return -1;
+        }
+        printBoard(board);
+        while (isspace(cmd[commandIndex]) != 0) {
+            commandIndex++;
+        }
+        currentIndex = commandIndex;
+        player++;
+    }
+    return 0;
 }

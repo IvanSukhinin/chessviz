@@ -16,26 +16,21 @@ int main(int argc, char* argv[])
                               {'.', '.', '.', '.', '.', '.', '.', '.'},
                               {'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'},
                               {'R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R'}};
-
     char cmd[LEN_CMD];
-    FILE* f;
-    f = fopen(argv[1], "r");
-    if (!f) {
+    FILE* userFile;
+    userFile = fopen(argv[1], "r");
+    if (!userFile) {
         printf("Не удалось открыть файл\n");
         return -1;
     }
-
     printBoard(board);
-
-    int check;
-    while (!feof(f)) {
-        fscanf(f, "%s", cmd);
-        check = Chess(board, cmd);
-        if (check == -1) {
+    while (!feof(userFile)) {
+        fgets(cmd, LEN_CMD, userFile);
+        if (runChess(board, cmd) == -1) {
             return -1;
         }
     }
 
-    fclose(f);
+    fclose(userFile);
     return 0;
 }
