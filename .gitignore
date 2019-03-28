@@ -1,2 +1,2 @@
-main
-levels.txt
+bin/*
+build/*
