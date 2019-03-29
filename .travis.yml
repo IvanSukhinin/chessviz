@@ -2,10 +2,10 @@ os: linux
 language: c
 
 before_script: make
-script: make
-
+script: 
+  - make
+  - git ls-files src/ | xargs clang-format -i && git diff --exit-code
+  
 compiler: gcc
 
 dist: xenial
-script: 
-    - git ls-files src/ | xargs clang-format -i && git diff --exit-code
