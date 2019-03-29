@@ -1,5 +1,5 @@
 os: linux
-language: C
+language: c
 
 before_script: make
 script: make
