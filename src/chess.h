@@ -1,3 +1,5 @@
+#pragma once
+
 #define LINE 8
 #define LEN_CMD 100
 #define LEN_MOVE_CMD 20

@@ -1,4 +1,5 @@
 #include "chess.h"
+#include "chess.h"
 #include <stdio.h>
 
 int main(int argc, char* argv[])
