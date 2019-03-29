@@ -9,6 +9,6 @@ int checkFigureType(char* cmd);
 int checkFigureMove(char board[LINE][LINE], char* cmd);
 int checkNumeration(char* cmd, int currentIndex);
 void printBoard(char board[LINE][LINE]);
-void Swap(char board[LINE][LINE], char* cmd);
+void swap(char board[LINE][LINE], char* cmd);
 char getFigureType(char board[LINE][LINE], char* cmd);
 int runChess(char board[LINE][LINE], char* cmd);

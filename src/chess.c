@@ -24,9 +24,9 @@ char getFigureType(char board[LINE][LINE], char* cmd)
     return figureType;
 }
 
-void Swap(char board[LINE][LINE], char* cmd)
+void swap(char board[LINE][LINE], char* cmd)
 {
-    enum CommandIndex {
+    enum commandIndex {
         figureLocationLetter,
         figureLocationIndex,
         moveOperation,
@@ -86,7 +86,7 @@ int checkFigureMove(char board[LINE][LINE], char* cmd)
 {
     char figureType = getFigureType(board, cmd);
     // Проверка на выход за пределы поля
-    enum CommandIndex {
+    enum commandIndex {
         figureLocationLetter,
         figureLocationIndex,
         moveOperation,

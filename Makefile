@@ -1,19 +1,17 @@
+.PHONY: clean
 CC = gcc
-CFLAGS = -Wall -Werror -c
+CFLAGS = -Wall -Werror
 
-all: main
+All: bin/main
 
-main: main.o chess.o move-*.o
+bin/main: build/main.o build/chess.o
 	$(CC) build/main.o build/chess.o -o bin/main
 
-move-*.o: main.o chess.o
-	mv *.o build/ 
+build/main.o: src/main.c
+	$(CC) $(CFLAGS) -c src/main.c -o build/main.o
 
-main.o: src/main.c
-	$(CC) $(CFLAGS) src/main.c
-
-chess.o: src/chess.c
-	$(CC) $(CFLAGS) src/chess.c 
+build/chess.o: src/chess.c
+	$(CC) $(CFLAGS) -c src/chess.c -o build/chess.o
 
 clean:
-	rm -rf build/*.o bin/main
+	rm -rf build/*.o main
