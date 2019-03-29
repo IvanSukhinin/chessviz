@@ -1,5 +1,11 @@
 os: linux
-language: c
+language: C
+
+before_script: make
 script: make
+
+compiler: gcc
+
+dist: xenial
 script: 
     - git ls-files src/ | xargs clang-format -i && git diff --exit-code

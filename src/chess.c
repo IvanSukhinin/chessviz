@@ -26,11 +26,18 @@ char getFigureType(char board[LINE][LINE], char* cmd)
 
 void Swap(char board[LINE][LINE], char* cmd)
 {
+    enum CommandIndex {
+        figureLocationLetter,
+        figureLocationIndex,
+        moveOperation,
+        figureDestinationLetter,
+        figureDestinationIndex,
+    };
     // Вычисляем координаты
-    int figureLocationX = ('8' - cmd[1]);
-    int figureLocationY = ('a' - cmd[0]) * -1;
-    int figureDestinationX = ('8' - cmd[4]);
-    int figureDestinationY = ('a' - cmd[3]) * -1;
+    int figureLocationX = ('8' - cmd[figureLocationIndex]);
+    int figureLocationY = ('a' - cmd[figureLocationLetter]) * -1;
+    int figureDestinationX = ('8' - cmd[figureDestinationIndex]);
+    int figureDestinationY = ('a' - cmd[figureDestinationLetter]) * -1;
     // Передвигаем фигуру
     char temp = board[figureLocationX][figureLocationY];
     board[figureLocationX][figureLocationY] = '.';
