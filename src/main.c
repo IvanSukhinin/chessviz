@@ -1,11 +1,12 @@
 #include "chess.h"
+#include "print_board.h"
 #include <stdio.h>
 
 int main(int argc, char* argv[])
 {
     printf("-------------CHESS---------------\n\n");
     if (argv[1] == NULL) {
-        printf("Введи main <filename>\n");
+        printf("Введи chess <filename>\n");
         return -1;
     }
     char board[LINE][LINE] = {{'r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'},
