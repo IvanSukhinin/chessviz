@@ -1,6 +1,6 @@
 #include "board.h"
-#include <stdio.h>
 #include <ctype.h>
+#include <stdio.h>
 
 char getFigureType(char board[LINE][LINE], char* cmd)
 {
@@ -69,7 +69,7 @@ int checkNumeration(char* cmd, int currentIndex)
 int checkFigureMove(char board[LINE][LINE], char* cmd)
 {
     char figureType = getFigureType(board, cmd);
-    // Проверка на выход за пределы поля
+
     enum commandIndex {
         figureLocationLetter,
         figureLocationIndex,
@@ -77,18 +77,8 @@ int checkFigureMove(char board[LINE][LINE], char* cmd)
         figureDestinationLetter,
         figureDestinationIndex,
     };
-    if (!((cmd[figureLocationLetter] >= 'a' && cmd[figureLocationLetter] <= 'h')
-          && (cmd[figureLocationIndex] >= '1'
-              && cmd[figureLocationIndex] <= '8')
-          && (cmd[figureDestinationIndex] >= '0'
-              && cmd[figureDestinationIndex] <= '8')
-          && (cmd[figureDestinationLetter] >= 'a'
-              && cmd[figureDestinationLetter] <= 'h'))
-        || (cmd[figureDestinationIndex + 1] > '0'
-            && cmd[figureDestinationIndex + 1] < '9')
-        || (cmd[figureLocationIndex + 1] > '0'
-            && cmd[figureLocationIndex + 1] < '9')) {
-        printf("Выход за пределы поля : %s\n", cmd);
+
+    if (checkRange(cmd) == -1) {
         return -1;
     }
 
@@ -123,6 +113,35 @@ int checkFigureMove(char board[LINE][LINE], char* cmd)
     char newLocation = board[figureLocationX][figureLocationY];
     board[figureLocationX][figureLocationY] = '.';
     board[figureDestinationX][figureDestinationY] = newLocation;
+
+    return 0;
+}
+
+int checkRange(char* cmd)
+{
+    // Проверка на выход за пределы поля
+    enum commandIndex {
+        figureLocationLetter,
+        figureLocationIndex,
+        moveOperation,
+        figureDestinationLetter,
+        figureDestinationIndex,
+    };
+
+    if (!((cmd[figureLocationLetter] >= 'a' && cmd[figureLocationLetter] <= 'h')
+          && (cmd[figureLocationIndex] >= '1'
+              && cmd[figureLocationIndex] <= '8')
+          && (cmd[figureDestinationIndex] >= '0'
+              && cmd[figureDestinationIndex] <= '8')
+          && (cmd[figureDestinationLetter] >= 'a'
+              && cmd[figureDestinationLetter] <= 'h'))
+        || (cmd[figureDestinationIndex + 1] > '0'
+            && cmd[figureDestinationIndex + 1] < '9')
+        || (cmd[figureLocationIndex + 1] > '0'
+            && cmd[figureLocationIndex + 1] < '9')) {
+        printf("Выход за пределы поля : %s\n", cmd);
+        return -1;
+    }
 
     return 0;
 }
