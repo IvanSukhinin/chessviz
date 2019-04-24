@@ -4,9 +4,17 @@
 
 #define PLAYER_COUNT 2
 
+enum commandIndex {
+    figureLocationLetter,
+    figureLocationIndex,
+    moveOperation,
+    figureDestinationLetter,
+    figureDestinationIndex,
+};
+
 typedef struct {
-	int figureLocationX;
-	int figureLocationY;
+    int figureLocationX;
+    int figureLocationY;
 } locationCoordinates;
 
 typedef struct {
@@ -15,10 +23,20 @@ typedef struct {
 } destinationCoordinates;
 
 char getFigureType(char board[LINE][LINE], char* cmd);
-void swap(char board[LINE][LINE], char* cmd);
+void makeMove(
+        char board[LINE][LINE],
+        char* cmd,
+        locationCoordinates l,
+        destinationCoordinates d);
+int checkMoveErrors(
+        char board[LINE][LINE],
+        char* cmd,
+        char figureType,
+        locationCoordinates l,
+        destinationCoordinates d);
 locationCoordinates getLocationCoordinates(char* cmd);
 destinationCoordinates getDestinationCoordinates(char* cmd);
 int checkRange(char* cmd);
-int checkNumeration(char* cmd, int currentIndex);
 int checkFigureMove(char board[LINE][LINE], char* cmd);
 int checkFigureType(char* cmd);
+int checkNumeration(char* cmd, int currentIndex);

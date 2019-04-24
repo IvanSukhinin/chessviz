@@ -1,8 +1,8 @@
 #include "chess.h"
 #include "board.h"
 #include "print_board.h"
-#include <stdio.h>
 #include <ctype.h>
+#include <stdio.h>
 
 int runChess(char board[LINE][LINE], char* cmd)
 {
