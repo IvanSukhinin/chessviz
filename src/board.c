@@ -4,11 +4,11 @@
 
 char getFigureType(char board[LINE][LINE], char* cmd)
 {
-    // Удаляет первый элемент из cmd
+    /*Получаем тип фигуры (1-ый символ в строке)*/
     if (cmd[0] >= 'a' && cmd[0] <= 'h') {
-        int figureLocationX = ('8' - cmd[1]);
-        int figureLocationY = ('a' - cmd[0]) * -1;
-        if (board[figureLocationX][figureLocationY] == 'P') {
+        locationCoordinates l;
+        l = getLocationCoordinates(cmd);
+        if (board[l.figureLocationX][l.figureLocationY] == 'P') {
             return 'P';
         } else {
             return 'p';
@@ -20,7 +20,7 @@ char getFigureType(char board[LINE][LINE], char* cmd)
         cmd[i] = cmd[i + 1];
     }
     cmd[i + 1] = ' ';
-    // И возвращает тип фигуры
+
     return figureType;
 }
 
@@ -34,14 +34,15 @@ void swap(char board[LINE][LINE], char* cmd)
         figureDestinationIndex,
     };
     // Вычисляем координаты
-    int figureLocationX = ('8' - cmd[figureLocationIndex]);
-    int figureLocationY = ('a' - cmd[figureLocationLetter]) * -1;
-    int figureDestinationX = ('8' - cmd[figureDestinationIndex]);
-    int figureDestinationY = ('a' - cmd[figureDestinationLetter]) * -1;
+    locationCoordinates l;
+    destinationCoordinates d;
+    l = getLocationCoordinates(cmd);
+    d = getDestinationCoordinates(cmd);
+
     // Передвигаем фигуру
-    char temp = board[figureLocationX][figureLocationY];
-    board[figureLocationX][figureLocationY] = '.';
-    board[figureDestinationX][figureDestinationY] = temp;
+    char temp = board[l.figureLocationX][l.figureLocationY];
+    board[l.figureLocationX][l.figureLocationY] = '.';
+    board[d.figureDestinationX][d.figureDestinationY] = temp;
 }
 
 int checkNumeration(char* cmd, int currentIndex)
@@ -71,11 +72,7 @@ int checkFigureMove(char board[LINE][LINE], char* cmd)
     char figureType = getFigureType(board, cmd);
 
     enum commandIndex {
-        figureLocationLetter,
-        figureLocationIndex,
-        moveOperation,
-        figureDestinationLetter,
-        figureDestinationIndex,
+        moveOperation = 2
     };
 
     if (checkRange(cmd) == -1) {
@@ -83,36 +80,36 @@ int checkFigureMove(char board[LINE][LINE], char* cmd)
     }
 
     // Получаем координаты
-    int figureLocationX = ('8' - cmd[figureLocationIndex]);
-    int figureLocationY = ('a' - cmd[figureLocationLetter]) * -1;
-    int figureDestinationX = ('8' - cmd[figureDestinationIndex]);
-    int figureDestinationY = ('a' - cmd[figureDestinationLetter]) * -1;
+    locationCoordinates l;
+    destinationCoordinates d;
+    l = getLocationCoordinates(cmd);
+    d = getDestinationCoordinates(cmd);
 
     if (cmd[moveOperation] != '-' && cmd[moveOperation] != 'x') {
         printf("%s\nЧе за %c?\n", cmd, cmd[2]);
         return -1;
     }
     if (cmd[moveOperation] == 'x'
-        && board[figureDestinationX][figureDestinationY] == '.') {
+        && board[d.figureDestinationX][d.figureDestinationY] == '.') {
         printf("Ошибка. Нет фигуры для взятия : %s\n", cmd);
         return -1;
     }
     if (cmd[moveOperation] == '-'
-        && board[figureDestinationX][figureDestinationY] != '.') {
+        && board[d.figureDestinationX][d.figureDestinationY] != '.') {
         printf("Ошибка. Клетка не пустая : %s\n", cmd);
         return -1;
     }
     if (toupper(figureType)
-        != toupper(board[figureLocationX][figureLocationY])) {
+        != toupper(board[l.figureLocationX][l.figureLocationY])) {
         printf("Обозначения фигур должны соответствовать фактическим : %s\n",
                cmd);
         return -1;
     }
 
     // Делаем ход
-    char newLocation = board[figureLocationX][figureLocationY];
-    board[figureLocationX][figureLocationY] = '.';
-    board[figureDestinationX][figureDestinationY] = newLocation;
+    char newLocation = board[l.figureLocationX][l.figureLocationY];
+    board[l.figureLocationX][l.figureLocationY] = '.';
+    board[d.figureDestinationX][d.figureDestinationY] = newLocation;
 
     return 0;
 }
@@ -148,7 +145,7 @@ int checkRange(char* cmd)
 
 int checkFigureType(char* cmd)
 {
-    // Проверка на тип фигуры
+    /*Проверка на тип фигуры*/
     int figureIndex = 0;
     if (!(cmd[figureIndex] == 'K' || cmd[figureIndex] == 'Q'
           || cmd[figureIndex] == 'R' || cmd[figureIndex] == 'B'
@@ -158,4 +155,23 @@ int checkFigureType(char* cmd)
     }
 
     return 0;
+}
+
+
+locationCoordinates getLocationCoordinates(char* cmd)
+{
+    /*Где находится фигура*/
+    locationCoordinates l;
+    l.figureLocationX = ('8' - cmd[1]);
+    l.figureLocationY = ('a' - cmd[0]) * -1;
+    return l;
+}
+
+destinationCoordinates getDestinationCoordinates(char* cmd)
+{
+    /*Пункт назначения*/
+    destinationCoordinates d;
+    d.figureDestinationX = ('8' - cmd[4]);
+    d.figureDestinationY = ('a' - cmd[3]) * -1;
+    return d;
 }
