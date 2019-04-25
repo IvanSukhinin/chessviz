@@ -1,2 +1,4 @@
 bin/*
-build/*
+build/src/*
+build/test/*
+build/.gitkeep
