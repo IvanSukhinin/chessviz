@@ -1,2 +1,4 @@
 bin/*
-build/*
+build/src/*.o
+build/test/*.o
+build/*.o
