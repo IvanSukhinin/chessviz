@@ -40,7 +40,7 @@ CTEST(input_test, check_figure_type)
     ASSERT_EQUAL(expected, result);
 }
 
-CTEST(input_test, check_figure_type_err_input)
+CTEST(input_test, check_figure_type_bad_input)
 {
     // Given
     char cmd[CMD_CAPACITY] = CMD_MOVE_ERR;
@@ -66,7 +66,7 @@ CTEST(input_test, check_numeration)
     ASSERT_EQUAL(expected, result);
 }
 
-CTEST(input_test, check_numeration_err_input)
+CTEST(input_test, check_numeration_bad_input)
 {
     // Given
     char cmd[CMD_CAPACITY] = CMD_NUM_ERR;
@@ -106,6 +106,19 @@ CTEST(move_test, check_range)
     ASSERT_EQUAL(expected, result);
 }
 
+CTEST(move_test, check_range_bad_input)
+{
+    // Given
+    char cmd[CMD_CAPACITY] = CMD_MOVE_ERR;
+
+    // When
+    const int result = checkRange(cmd);
+
+    // Then
+    const int expected = -1;
+    ASSERT_EQUAL(expected, result);
+}
+
 CTEST(move_test, check_normal_level_move_errors)
 {
     // Given
@@ -135,5 +148,18 @@ CTEST(move_test, check_figure_move)
 
     // Then
     const int expected = 0;
+    ASSERT_EQUAL(expected, result);
+}
+
+CTEST(move_test, check_figure_move_bad_input)
+{
+    // Given
+    char cmd[CMD_CAPACITY] = CMD_MOVE_ERR;
+
+    // When
+    const int result = checkFigureMove(board, cmd);
+
+    // Then
+    const int expected = -1;
     ASSERT_EQUAL(expected, result);
 }
