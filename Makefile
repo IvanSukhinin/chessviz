@@ -49,3 +49,6 @@ install:
 
 uninstall:
 	rm -rf $(INSTALL_PATH)/chess
+
+run_test: test
+	$(TEST)
